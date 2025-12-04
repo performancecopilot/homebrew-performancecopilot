@@ -58,23 +58,40 @@ This will remove the PCP package and stop all associated services.
 
 ## For Maintainers
 
+### Version Format
+
+PCP uses a two-part versioning scheme: `MAJOR.MINOR.PATCH-BUILD`
+
+**Example:** `7.0.4-1`
+- **Release tag:** `7.0.4` (used in GitHub release URLs)
+- **Build number:** `-1` (appended to DMG and PKG filenames)
+
+This is important to understand when updating versions:
+- GitHub release tag is just the semantic version: `7.0.4`
+- The downloadable DMG file includes the build number: `pcp-7.0.4-1.dmg`
+- The cask uses `version.major_minor_patch` to extract `7.0.4` for the download URL
+
+**When updating to new versions, ensure both parts are included in the version string.**
+
 ### Updating for New Releases
 
 When a new version of PCP is released, follow these steps to update the cask:
 
 1. **Download the new DMG** from the [PCP releases page](https://github.com/performancecopilot/pcp/releases):
    ```bash
-   curl -LO https://github.com/performancecopilot/pcp/releases/download/X.Y.Z/pcp-X.Y.Z.dmg
+   # Note: Release tag is X.Y.Z, but DMG filename includes build number
+   curl -LO https://github.com/performancecopilot/pcp/releases/download/X.Y.Z/pcp-X.Y.Z-B.dmg
    ```
 
 2. **Calculate SHA256 checksum**:
    ```bash
-   shasum -a 256 pcp-X.Y.Z.dmg
+   shasum -a 256 pcp-X.Y.Z-B.dmg
    ```
 
 3. **Update the cask file** (`Casks/pcp-perf.rb`):
-   - Update the `version` field to the new version
+   - Update the `version` field to include both version and build: `X.Y.Z-B`
    - Update the `sha256` field with the calculated checksum
+   - Example: For release 7.0.5 with build 2, use `version "7.0.5-2"`
 
 4. **Test locally** before pushing:
    ```bash
@@ -84,7 +101,7 @@ When a new version of PCP is released, follow these steps to update the cask:
 5. **Commit and push changes**:
    ```bash
    git add Casks/pcp-perf.rb
-   git commit -m "Update pcp-perf to version X.Y.Z"
+   git commit -m "Update pcp-perf to version X.Y.Z-B"
    git push
    ```
 
