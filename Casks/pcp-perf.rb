@@ -29,11 +29,11 @@ cask "pcp-perf" do
               "/Library/LaunchDaemons/io.pcp.pmproxy.plist",
             ]
 
-  zap trash: [
-        "/etc/pcp",
-        "/var/lib/pcp",
-        "/var/log/pcp",
-      ]
+  zap script: {
+        executable: "/usr/local/libexec/pcp/bin/uninstall-pcp",
+        args:       ["--force"],
+        sudo:       true,
+      }
 
   caveats <<~EOS
     PCP has been installed with the following services:
